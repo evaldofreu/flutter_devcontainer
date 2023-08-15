@@ -1,0 +1,20 @@
+{
+    "name": "Flutter DevContainer",
+    "context": "..",
+    "dockerFile": "../Dockerfile",
+    "remoteUser": "developer",
+    "settings": {
+        "terminal.integrated.shell.linux": null
+    },
+    "extensions": [
+        "dart-code.flutter",
+        "dart-code.dart",
+        "nash.awesome-flutter-snippets"
+    ],
+    "runArgs": [
+        "--privileged"
+    ],
+    "forwardPorts": [],
+    "workspaceMount": "source=${localWorkspaceFolder}/workspace,target=/home/developer/workspace,type=bind,consistency=delegated",
+    "workspaceFolder": "/home/developer/workspace"
+}
