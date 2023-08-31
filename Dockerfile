@@ -16,13 +16,18 @@ ENV FLUTTER_HOME="/home/$USER/flutter"
 ENV FLUTTER_WEB_PORT="8090"
 ENV FLUTTER_DEBUG_PORT="42000"
 ENV FLUTTER_EMULATOR_NAME="flutter_emulator"
-ENV PATH="$ANDROID_SDK_ROOT/cmdline-tools/tools:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/cmdline-tools/tools/lib:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/platforms:$FLUTTER_HOME/bin:$PATH"
+ENV PATH="$ANDROID_SDK_ROOT/cmdline-tools/tools:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/cmdline-tools/tools/lib:$ANDROID_SDK_ROOT/tools/emulator:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/platforms:$FLUTTER_HOME/bin:$PATH"
 
 # install all dependencies
 ENV DEBIAN_FRONTEND="noninteractive"
 RUN apt-get update \
   && apt-get install --yes --no-install-recommends openjdk-$JAVA_VERSION-jdk curl unzip sed git bash xz-utils libglvnd0 ssh xauth x11-xserver-utils libpulse0 libxcomposite1 libgl1-mesa-glx sudo clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev npm nodejs\
   && rm -rf /var/lib/{apt,dpkg,cache,log}
+
+
+# Set the timezone
+ENV TZ=America/Sao_Paulo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # create user
 RUN groupadd --gid $GID $USER \
@@ -70,4 +75,6 @@ COPY entrypoint.sh /usr/local/bin/
 COPY chown.sh /usr/local/bin/
 COPY flutter-android-emulator.sh /usr/local/bin/flutter-android-emulator
 
+RUN sudo sed -i -e 's/\r$//' /usr/local/bin/flutter-android-emulator
+RUN echo  saveOnExit = true > /home/developer/.android/avd/flutter_emulator.avd/quickbootChoice.ini
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
